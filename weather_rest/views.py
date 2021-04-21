@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from . import api_keys
 from .serializers import CitySerializer
 
-API_KEY = getattr(api_keys, 'WEATHER_MAP_API_KEY')
+OPEN_WEATHER_API_KEY = getattr(api_keys, 'OPEN_WEATHER_API_KEY')
+PEXEL_API_KEY  = getattr(api_keys, 'PEXEL_API_KEY')
 
 
 class IndexView(APIView):
@@ -23,10 +24,10 @@ class IndexView(APIView):
 
     def get_image_url(self):
         url = "https://api.pexels.com/v1/search?query=landscape&orientation=landscape" \
-              "&Authorization=563492ad6f917000010000011a215b432e5b4c05b998276c9986502e&size=large&per_page=80"
+              f"&Authorization={PEXEL_API_KEY}&size=large&per_page=80"
         response = requests.get(url,
                                 headers={
-                                    'authorization': '563492ad6f917000010000011a215b432e5b4c05b998276c9986502e'
+                                    'authorization': PEXEL_API_KEY
                                 }).json()
         if 'error' in response:
             return ''
@@ -34,7 +35,7 @@ class IndexView(APIView):
         return image_data['src']['original']
 
     def get_city_weather(self, city):
-        url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={API_KEY}'
+        url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={OPEN_WEATHER_API_KEY }'
         response = requests.get(url).json()
         if response['cod'] != status.HTTP_200_OK:
             return {'error': 'Wrong city name'}
@@ -59,4 +60,16 @@ class IndexView(APIView):
         return Response(city_data)
 
 
-# class
+class NewSessionView(APIView):
+    def get(self, request, *args, **kwargs):
+        request.session.flush()
+        return Response()
+
+
+class RemoveCity(APIView):
+    def get(self, request, *args, **kwargs):
+        serializer = CitySerializer(request.GET)
+        city_name = serializer.data.get('city')
+        if f'city_{city_name}' in request.session.keys():
+            del request.session[f'city_{city_name}']
+        return Response({'msg': 'city has been removed'})

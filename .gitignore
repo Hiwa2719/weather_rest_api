@@ -23,7 +23,7 @@ media
 
 # C extensions
 *.so
-
+api_keys.py
 # Distribution / packaging
 .Python
 build/

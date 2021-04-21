@@ -40,4 +40,14 @@ class WeatherRestApiTest(APITestCase):
         self.client.post(self.index_endpoint, {'city': 'marivan'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(self.index_endpoint)
+        self.assertEqual(len(response.data), 1)
+
+    def test_removing_city(self):
+        """testing removing city from session"""
+        self.client.post(self.index_endpoint, {'city': 'Marivan'})
+        url = reverse('weather_rest:remove-city')
+        response = self.client.get(url, {'city': 'Marivan'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(self.index_endpoint)
         self.assertEqual(len(response.data), 1)
