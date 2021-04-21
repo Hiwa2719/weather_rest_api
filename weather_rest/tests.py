@@ -51,3 +51,10 @@ class WeatherRestApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get(self.index_endpoint)
         self.assertEqual(len(response.data), 1)
+
+    def test_getting_weather_data_on_lat_lon(self):
+        """getting weather data based on latitude and longitude"""
+        url = reverse('weather_rest:weather-detail')
+        response = self.client.get(url, {'lon': 46.176, 'lat': 35.5219, 'city': 'Marivan'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('days', response.data)
