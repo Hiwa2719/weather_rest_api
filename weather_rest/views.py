@@ -12,7 +12,8 @@ from . import api_keys
 from .serializers import CitySerializer
 
 OPEN_WEATHER_API_KEY = getattr(api_keys, 'OPEN_WEATHER_API_KEY')
-PEXEL_API_KEY  = getattr(api_keys, 'PEXEL_API_KEY')
+PEXEL_API_KEY = getattr(api_keys, 'PEXEL_API_KEY')
+
 tz = tzwhere.tzwhere()
 
 
